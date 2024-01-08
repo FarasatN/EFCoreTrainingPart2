@@ -5,7 +5,7 @@
 namespace EFCoreTrainingPart2.Migrations
 {
     /// <inheritdoc />
-    public partial class mig3 : Migration
+    public partial class backing_field_fieldonly_properties4 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

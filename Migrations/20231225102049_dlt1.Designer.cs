@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCoreTrainingPart2.Migrations
 {
     [DbContext(typeof(Program.ApplicationDbContext))]
-    [Migration("20231213180653_mig3")]
-    partial class mig3
+    [Migration("20231225102049_dlt1")]
+    partial class dlt1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,33 @@ namespace EFCoreTrainingPart2.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("EFCoreTrainingPart2.Program+Address", b =>
+                {
+                    b.Property<int>("AddressId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AddressId"));
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PersonId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("AddressId");
+
+                    b.HasIndex("PersonId")
+                        .IsUnique();
+
+                    b.ToTable("Addresses");
+                });
+
             modelBuilder.Entity("EFCoreTrainingPart2.Program+Author", b =>
                 {
                     b.Property<int>("AuthorId")
@@ -32,7 +59,7 @@ namespace EFCoreTrainingPart2.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuthorId"));
 
-                    b.Property<string>("AuthorName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -43,17 +70,17 @@ namespace EFCoreTrainingPart2.Migrations
 
             modelBuilder.Entity("EFCoreTrainingPart2.Program+Book", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("BookId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookId"));
 
-                    b.Property<string>("BookName")
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("BookId");
 
                     b.ToTable("Books");
                 });
@@ -73,16 +100,44 @@ namespace EFCoreTrainingPart2.Migrations
                     b.ToTable("BookAuthors");
                 });
 
+            modelBuilder.Entity("EFCoreTrainingPart2.Program+Person", b =>
+                {
+                    b.Property<int>("PersonId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PersonId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PersonId");
+
+                    b.ToTable("Persons");
+                });
+
+            modelBuilder.Entity("EFCoreTrainingPart2.Program+Address", b =>
+                {
+                    b.HasOne("EFCoreTrainingPart2.Program+Person", "Person")
+                        .WithOne("Address")
+                        .HasForeignKey("EFCoreTrainingPart2.Program+Address", "PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Person");
+                });
+
             modelBuilder.Entity("EFCoreTrainingPart2.Program+BookAuthor", b =>
                 {
                     b.HasOne("EFCoreTrainingPart2.Program+Author", "Author")
-                        .WithMany("Books")
+                        .WithMany("BookAuthors")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("EFCoreTrainingPart2.Program+Book", "Book")
-                        .WithMany("Authors")
+                        .WithMany("BookAuthors")
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -94,12 +149,18 @@ namespace EFCoreTrainingPart2.Migrations
 
             modelBuilder.Entity("EFCoreTrainingPart2.Program+Author", b =>
                 {
-                    b.Navigation("Books");
+                    b.Navigation("BookAuthors");
                 });
 
             modelBuilder.Entity("EFCoreTrainingPart2.Program+Book", b =>
                 {
-                    b.Navigation("Authors");
+                    b.Navigation("BookAuthors");
+                });
+
+            modelBuilder.Entity("EFCoreTrainingPart2.Program+Person", b =>
+                {
+                    b.Navigation("Address")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

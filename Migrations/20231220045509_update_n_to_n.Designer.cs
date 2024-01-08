@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCoreTrainingPart2.Migrations
 {
     [DbContext(typeof(Program.ApplicationDbContext))]
-    [Migration("20231213174708_mig2")]
-    partial class mig2
+    [Migration("20231220045509_update_n_to_n")]
+    partial class update_n_to_n
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,7 +32,7 @@ namespace EFCoreTrainingPart2.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuthorId"));
 
-                    b.Property<string>("AuthorName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -43,17 +43,17 @@ namespace EFCoreTrainingPart2.Migrations
 
             modelBuilder.Entity("EFCoreTrainingPart2.Program+Book", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("BookId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookId"));
 
-                    b.Property<string>("BookName")
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("BookId");
 
                     b.ToTable("Books");
                 });
@@ -76,13 +76,13 @@ namespace EFCoreTrainingPart2.Migrations
             modelBuilder.Entity("EFCoreTrainingPart2.Program+BookAuthor", b =>
                 {
                     b.HasOne("EFCoreTrainingPart2.Program+Author", "Author")
-                        .WithMany("Books")
+                        .WithMany("BookAuthors")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("EFCoreTrainingPart2.Program+Book", "Book")
-                        .WithMany("Authors")
+                        .WithMany("BookAuthors")
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -94,12 +94,12 @@ namespace EFCoreTrainingPart2.Migrations
 
             modelBuilder.Entity("EFCoreTrainingPart2.Program+Author", b =>
                 {
-                    b.Navigation("Books");
+                    b.Navigation("BookAuthors");
                 });
 
             modelBuilder.Entity("EFCoreTrainingPart2.Program+Book", b =>
                 {
-                    b.Navigation("Authors");
+                    b.Navigation("BookAuthors");
                 });
 #pragma warning restore 612, 618
         }
